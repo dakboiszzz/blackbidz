@@ -1,13 +1,19 @@
 
+import Navbar from './components/NavBar';
+import Hero from './components/Hero';
+import Footer from './components/Footer';
+
 import './App.css'
 
 function App() {
 
   return (
-    <>
-      <div>Welcome to LTH's personal website</div>
-    </>
-  )
+    <div className="portfolio-container">
+      <Navbar />
+      <Hero />
+      <Footer />
+    </div>
+  );
 }
 
-export default App
+export default App;
