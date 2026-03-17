@@ -3,6 +3,7 @@ import Navbar from './components/NavBar';
 import Hero from './components/Hero';
 import Footer from './components/Footer';
 import Blogs from './components/Blogs';
+import BlogPost from './components/BlogPost';
 import './App.css'
 
 function App() {
@@ -14,6 +15,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Hero />} />
           <Route path="/blogs" element={<Blogs />} />
+          
+          <Route path="/blogs/:slug" element={<BlogPost />} />
         </Routes>
 
         <Footer />
