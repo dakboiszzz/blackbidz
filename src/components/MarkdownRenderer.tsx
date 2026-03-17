@@ -38,19 +38,34 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             const match = /language-(\w+)/.exec(className || '');
             
             return match ? (
-              // If it's a block of code (```)
-              <div style={{ borderRadius: '8px', overflow: 'hidden', margin: '2rem 0', fontSize: '1.1rem' }}>
+              // We removed the inline style from this div, as customStyle handles it now
+              <div>
                 <SyntaxHighlighter
                   {...rest}
                   PreTag="div"
                   children={String(children).replace(/\n$/, '')}
                   language={match[1]}
                   style={vscDarkPlus}
+                  // 1. THIS STYLES THE DARK BOX
+                  customStyle={{
+                    padding: '2rem', // Lots of breathing room
+                    borderRadius: '12px', // Smooth, rounded corners
+                    backgroundColor: '#0d1117', // A deeper, richer dark mode background
+                    margin: '2rem 0', // Spacing above and below the code block
+                  }}
+                  // 2. THIS STYLES THE TEXT INSIDE
+                  codeTagProps={{
+                    style: {
+                      fontFamily: "'JetBrains Mono', Consolas, monospace", // Your new premium font
+                      fontSize: '1.15rem', // Bigger text
+                      lineHeight: '1.6', // Better spacing between lines
+                    }
+                  }}
                 />
               </div>
             ) : (
-              // If it's inline code (`)
-              <code {...rest} style={{ backgroundColor: 'var(--btn-bg)', padding: '0.2rem 0.4rem', borderRadius: '4px', fontFamily: 'monospace', color: 'var(--text-color)' }}>
+                // Update the fontFamily here to match!
+              <code {...rest} style={{ backgroundColor: 'var(--btn-bg)', padding: '0.2rem 0.4rem', borderRadius: '4px', fontFamily: "'JetBrains Mono', Consolas, monospace", color: 'var(--text-color)' }}>
                 {children}
               </code>
             );

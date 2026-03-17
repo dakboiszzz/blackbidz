@@ -1,6 +1,6 @@
 /* 1. Import the free Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Lora&family=Noto+Serif+Display&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
 /* 2. Load your custom local font (Ensure the file is in public/fonts/) */
 @font-face {
   font-family: 'TAN Mon Cheri';
