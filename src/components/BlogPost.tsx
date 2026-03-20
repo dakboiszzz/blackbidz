@@ -1,45 +1,63 @@
+import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import MarkdownRenderer from './MarkdownRenderer';
 
-export default function BlogPost() {
-  const { slug } = useParams(); 
-
-  // MOCK MARKDOWN DATA: This is exactly what FastAPI will eventually send you from the database
-  const mockMarkdownText = `
-This is a demonstration of **react-markdown** combined with our beautiful custom typography. 
-
-## Why Markdown?
-Writing raw HTML inside a database is tedious. Markdown allows you to write naturally:
-* It is easy to read
-* It converts safely to HTML
-* It supports plugins like \`remark-gfm\`
-* Code
-
-\`\`\`python
-def greet_user(name):
-    print(f"Hello, {name}! Welcome to the blog.")
-
-greet_user("Hung")
-\`\`\`
-
-\`\`\`javascript
-function greetUser(name) {
-    console.log(\`Hello, \${name}! Welcome to the blog.\`);
+interface Post {
+  id: number;
+  title: string;
+  slug: string;
+  summary: string;
+  content: string;
+  is_published: boolean;
+  created_at: string;
 }
 
-greetUser("Hung");
-\`\`\`
+const API_URL = "https://blackbi-lth-blog.hf.space";
 
-> "Simplicity is the soul of efficiency." 
+export default function BlogPost() {
+  const { slug } = useParams(); 
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-You can even add links easily, like this link to [blackbidz.com](https://blackbidz.com), and the renderer handles it automatically.
-  `;
+  useEffect(() => {
+    setLoading(true);
+    fetch(`${API_URL}/api/blogs/${slug}`)
+      .then(res => {
+        if (res.status === 404) throw new Error("This blog post could not be found.");
+        if (!res.ok) throw new Error("Failed to fetch the article from the server.");
+        return res.json();
+      })
+      .then(data => {
+        setPost(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, [slug]);
 
-  const post = {
-    title: `Reading: ${slug}`,
-    date: "March 17, 2026",
-    content: mockMarkdownText // Using our new mock Markdown string
-  };
+  if (loading) {
+    return (
+      <main className="blog-post-container" style={{ flex: 1, width: '100%', maxWidth: '800px', margin: '4rem auto', padding: '0 2rem' }}>
+        <p style={{ fontFamily: 'EB Garamond, serif', fontSize: '1.2rem', opacity: 0.7 }}>Dusting off the pages...</p>
+      </main>
+    );
+  }
+
+  if (error || !post) {
+    return (
+      <main className="blog-post-container" style={{ flex: 1, width: '100%', maxWidth: '800px', margin: '4rem auto', padding: '0 2rem' }}>
+        <Link to="/blogs" style={{ fontFamily: 'Lora, serif', color: 'var(--text-color)', textDecoration: 'none', opacity: 0.7, marginBottom: '2rem', display: 'inline-block' }}>
+          &larr; Back to all blogs
+        </Link>
+        <p style={{ fontFamily: 'EB Garamond, serif', fontSize: '1.2rem', color: 'red', opacity: 0.8 }}>{error || "Post not found."}</p>
+      </main>
+    );
+  }
+
+  const dateStr = new Date(post.created_at).toLocaleDateString("en-US", { year: 'numeric', month: 'long', day: 'numeric' });
 
   return (
     <main className="blog-post-container" style={{ flex: 1, width: '100%', maxWidth: '800px', margin: '4rem auto', padding: '0 2rem' }}>
@@ -54,10 +72,9 @@ You can even add links easily, like this link to [blackbidz.com](https://blackbi
         </h1>
         
         <p style={{ fontFamily: 'EB Garamond, serif', letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.6, marginBottom: '3rem' }}>
-          {post.date}
+          {dateStr}
         </p>
 
-        {/* WE INJECT THE RENDERER HERE */}
         <MarkdownRenderer content={post.content} />
 
       </article>
