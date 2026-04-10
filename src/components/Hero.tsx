@@ -12,7 +12,8 @@ function Hero() {
           I'm L.T. Hung
         </h1>
         <p className="subtitle">WELCOME TO MY WEBSITE !</p>
-        <button className="cv-button">View my CV</button>
+        <a href="/LTH_CV.pdf" target="_blank" rel="noopener noreferrer" className="cv-button"> View my CV
+        </a>
       </div>
       </main>  
     );
