@@ -11,7 +11,7 @@ interface Post {
   created_at: string;
 }
 
-const API_URL = "https://blackbi-lth-blog.hf.space";
+const API_URL = "http://127.0.0.1:8000";
 
 function Blogs() {
   const [blogs, setBlogs] = useState<Post[]>([]);

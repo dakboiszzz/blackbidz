@@ -2,12 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import our database engine and the Base classes
-from database import engine, get_db
+from backend.database import engine, get_db
 from sqlalchemy.orm import Session
 from typing import List
 from fastapi import Depends, HTTPException
-import schemas
-import models
+import backend.schemas as schemas
+import backend.models as models
 
 # This safely creates any missing tables if they don't exist yet
 models.Base.metadata.create_all(bind=engine)
@@ -16,6 +16,8 @@ app = FastAPI(
     title="Blog API",
     description="Backend for the vintage-inspired blog."
 )
+
+
 
 # --- CORS Configuration ---
 origins = [
@@ -34,6 +36,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.post("/api/posts/", response_model=schemas.PostResponse)
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
+    # Check if a post with the same slug already exists
+    db_post = db.query(models.Post).filter(models.Post.slug == post.slug).first()
+    if db_post:
+        raise HTTPException(status_code=400, detail="Slug already registered")
+    
+    # Create the new post
+    new_post = models.Post(**post.model_dump())
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+    return new_post
 
 @app.get("/")
 def read_root():
