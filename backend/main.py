@@ -9,6 +9,11 @@ from fastapi import Depends, HTTPException
 import backend.schemas as schemas
 import backend.models as models
 
+from fastapi import UploadFile, File
+import shutil
+import os
+import time
+
 # This safely creates any missing tables if they don't exist yet
 models.Base.metadata.create_all(bind=engine)
 
@@ -36,6 +41,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "public", "blogs"))
+@app.post("/api/upload")
+async def upload_image(file: UploadFile = File(...)):
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
+    # Add timestamp to filename to prevent overwriting
+    timestamp = int(time.time())
+    unique_filename = f"{timestamp}_{file.filename}"
+    file_path = os.path.join(UPLOAD_DIR, unique_filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Because it's in the 'public' folder, the browser sees it at the root
+    return {"url": f"/blogs/{unique_filename}"}
 
 @app.post("/api/posts/", response_model=schemas.PostResponse)
 def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
