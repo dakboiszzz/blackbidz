@@ -29,7 +29,7 @@ jobs:
           
           # 3. Add the HF Space as a remote
           # Change USERNAME and SPACE_NAME to yours!
-          git remote add space https://dakboiszzz:$HF_TOKEN@huggingface.co/spaces/USERNAME/SPACE_NAME
+          git remote add space https://dakboiszzz:$HF_TOKEN@huggingface.co/spaces/Blackbi/lth-blog
           
           # 4. Force push the contents of 'backend' to the 'main' branch of the Space
           git add .
