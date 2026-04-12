@@ -18,11 +18,12 @@ const MusicEvaluations: React.FC = () => {
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fetch all reviews from your new backend endpoint
-    fetch(`${import.meta.env.VITE_API_URL}/api/music_reviews`)
-      .then(response => response.json())
-      .then(data => setReviews(data));
-  }, []);
+  // Added a / at the end of the URL
+  fetch(`${import.meta.env.VITE_API_URL}/api/music_reviews/`)
+    .then(response => response.json())
+    .then(data => setReviews(data))
+    .catch(err => console.error("Fetch error:", err));
+}, []);
 
   // Find the full review object based on the selected ID
   const selectedReview = reviews.find(review => review.id === selectedReviewId);
