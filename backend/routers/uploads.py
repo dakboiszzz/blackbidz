@@ -12,7 +12,7 @@ cloudinary.config(secure=True)
 
 router = APIRouter(prefix="/api/upload", tags=["Uploads"])
 
-@router.post("/")
+@router.post("")
 async def upload_image(file: UploadFile = File(...), folder: str = Form("blogs")):
     # 1. Security constraint: only allow your specified frontend folders
     valid_folders = ["blogs", "music_reviews", "projects"]
