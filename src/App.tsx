@@ -6,8 +6,38 @@ import Blogs from './components/Blogs';
 import BlogPost from './components/BlogPost';
 import AdminPanel from './components/AdminPanel';
 import './App.css'
+import Loader from './components/Loader';
+import { useState, useEffect } from 'react';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
+  const [isServerReady, setIsServerReady] = useState(false);
+  const [message, setMessage] = useState("Connecting...");
+
+  useEffect(() => {
+    const checkServer = async () => {
+      try {
+        // Ping your health endpoint
+        const res = await fetch(`${API_URL}/api/health`);
+        if (res.ok) {
+          setIsServerReady(true);
+        } else {
+          throw new Error();
+        }
+      } catch (err) {
+        setMessage("Server is sleeping. Waking it up...");
+        // Re-check every 4 seconds until it responds
+        setTimeout(checkServer, 4000);
+      }
+    };
+
+    checkServer();
+  }, []);
+
+  if (!isServerReady) {
+    return <Loader message={message} />;
+  }
   return (
     <Router>
       <div className="portfolio-container">
