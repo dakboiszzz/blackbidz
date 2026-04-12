@@ -1,4 +1,4 @@
-from database import engine, Base
+from backend.database import engine, Base
 from models import Post  # Import models so Base knows about them
 
 # Create tables in the database

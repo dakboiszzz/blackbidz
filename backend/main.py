@@ -98,3 +98,8 @@ def get_blog(slug: str, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status_code=404, detail="Blog post not found")
     return post
+@app.get("/api/music_reviews", response_model=List[schemas.MusicReview])
+def get_music_reviews(db: Session = Depends(get_db)):
+    # Order by ID descending to get the newest reviews first
+    reviews = db.query(models.MusicReview).order_by(models.MusicReview.id.desc()).all()
+    return reviews

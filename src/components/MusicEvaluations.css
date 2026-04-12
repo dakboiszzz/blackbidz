@@ -1,0 +1,140 @@
+/* MusicEvaluations.css */
+
+.evaluations-container {
+    padding: 2rem;
+    color: #8a4d1f; /* From your design */
+}
+
+.evaluations-container h1 {
+    font-family: 'TAN Mon Cheri',serif;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    border-bottom: 2px solid #D9CBBF; /* Design color */
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+/* Grid View */
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cards per row, like your image */
+    gap: 2rem;
+}
+
+.music-card {   
+    background-color: #F2E8DF; /* Design card background */
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center; /* Center image vertically with text */
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.music-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.artist-image {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 4px;
+    object-fit: cover;
+    margin-right: 1.5rem;
+}
+
+.music-card h3 {
+    margin-top: 0;
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.music-card p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 0;
+}
+
+/* Detail View (Modal) */
+.detail-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: #F2E8DF; /* Same as card bg */
+    border-radius: 8px;
+    max-width: 80vw;
+    max-height: 80vh;
+    padding: 2rem;
+    position: relative;
+    overflow-y: auto; /* Scrollable if content is too long */
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #4a3a2e;
+}
+
+.modal-inner {
+    display: flex;
+    gap: 2rem;
+}
+
+.detail-artist-image {
+    width: 15rem; /* Larger than grid image */
+    height: 15rem;
+    border-radius: 4px;
+    object-fit: cover;
+    align-self: flex-start; /* Place top-left of its side */
+}
+
+.detail-info {
+    flex: 1;
+}
+
+.detail-info h2 {
+    font-size: 2rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+.full-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #4a3a2e;
+}
+
+.detail-info h3 {
+    text-transform: uppercase;
+    font-size: 1rem;
+    border-top: 1px solid #D9CBBF;
+    padding-top: 1rem;
+    margin-top: 2rem;
+}
+
+.keywords-list {
+    list-style: disc; /* bullet points */
+    padding-left: 1.5rem;
+    color: #4a3a2e;
+}
+
+.keywords-list li {
+    margin-bottom: 0.5rem;
+}
