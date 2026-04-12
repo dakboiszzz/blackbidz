@@ -34,4 +34,4 @@ jobs:
           # 4. Force push the contents of 'backend' to the 'main' branch of the Space
           git add .
           git commit -m "Syncing backend from GitHub"
-          git push space main:main --force
+          git push space HEAD:main --force
