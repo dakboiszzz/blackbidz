@@ -2,12 +2,17 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Import our database engine and the Base classes
-from database import engine, get_db
+from backend.database import engine, get_db
 from sqlalchemy.orm import Session
 from typing import List
 from fastapi import Depends, HTTPException
-import schemas
-import models
+import backend.schemas as schemas
+import backend.models as models
+
+from fastapi import UploadFile, File
+import shutil
+import os
+import time
 
 # This safely creates any missing tables if they don't exist yet
 models.Base.metadata.create_all(bind=engine)
@@ -16,6 +21,8 @@ app = FastAPI(
     title="Blog API",
     description="Backend for the vintage-inspired blog."
 )
+
+
 
 # --- CORS Configuration ---
 origins = [
@@ -34,6 +41,36 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "public", "blogs"))
+@app.post("/api/upload")
+async def upload_image(file: UploadFile = File(...)):
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+    
+    # Add timestamp to filename to prevent overwriting
+    timestamp = int(time.time())
+    unique_filename = f"{timestamp}_{file.filename}"
+    file_path = os.path.join(UPLOAD_DIR, unique_filename)
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Because it's in the 'public' folder, the browser sees it at the root
+    return {"url": f"/blogs/{unique_filename}"}
+
+@app.post("/api/posts/", response_model=schemas.PostResponse)
+def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
+    # Check if a post with the same slug already exists
+    db_post = db.query(models.Post).filter(models.Post.slug == post.slug).first()
+    if db_post:
+        raise HTTPException(status_code=400, detail="Slug already registered")
+    
+    # Create the new post
+    new_post = models.Post(**post.model_dump())
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+    return new_post
 
 @app.get("/")
 def read_root():

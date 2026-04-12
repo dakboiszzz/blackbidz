@@ -13,6 +13,18 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
+          img: ({ node, ...props }) => (
+          <img 
+            {...props} 
+            style={{ 
+              maxWidth: '100%', 
+              height: 'auto', 
+              borderRadius: '8px',
+              marginTop: '1rem',
+              marginBottom: '1rem' 
+            }} 
+          />
+        ),
           /* Maps # Header 1 to TAN Mon Cheri */
           h1: ({node, ...props}) => <h1 style={{ fontFamily: 'TAN Mon Cheri, serif', fontSize: '3rem', fontWeight: 'normal', margin: '2.5rem 0 1rem 0' }} {...props} />,
           

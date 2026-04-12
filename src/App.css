@@ -9,6 +9,16 @@
   font-style: normal;
 }
 
+/* Target images inside your markdown container */
+.prose img, 
+.markdown-body img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto; /* Centers the image and adds space */
+  border-radius: 8px; /* Optional: makes it look cleaner */
+}
+
 /* --- VARIABLES & BASE STYLES --- */
 :root {
   --bg-color: #fdfaf6; /* The main off-white background */
