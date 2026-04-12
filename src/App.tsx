@@ -9,6 +9,7 @@ import './App.css'
 import Loader from './components/Loader';
 import { useState, useEffect } from 'react';
 import MusicEvaluations from './components/MusicEvaluations';
+import CreateMusicReview from './components/CreateMusicReview';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -51,6 +52,7 @@ function App() {
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/secret-admin-panel" element={<AdminPanel />} />
           <Route path="/projects" element={<MusicEvaluations />} />
+          <Route path="/secret-music-admin" element={<CreateMusicReview />} />
         </Routes>
 
         <Footer />

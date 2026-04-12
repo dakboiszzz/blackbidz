@@ -18,8 +18,10 @@ const MusicReviewCard: React.FC<MusicReviewCardProps> = ({ review, onClick }) =>
   return (
     <div className="music-card" onClick={onClick}>
       <img src={review.image_url} alt={review.title} className="artist-image" />
-      <h3>{review.title}</h3>
-      <p>{review.summary}</p>
+      <div className="music-card-text">
+        <h3>{review.title}</h3>
+        <p>{review.summary}</p>
+      </div>
     </div>
   );
 };

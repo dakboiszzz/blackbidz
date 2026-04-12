@@ -10,6 +10,7 @@ interface FullMusicReview {
   summary: string;
   keywords: string;
   full_content: string;
+  created_at: string;
 }
 
 const MusicEvaluations: React.FC = () => {
@@ -43,24 +44,52 @@ const MusicEvaluations: React.FC = () => {
 
       {/* Detail View (Modal) */}
       {selectedReview && (
-        <div className="detail-modal" onClick={() => setSelectedReviewId(null)}> {/* Click outside to close */}
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}> {/* Prevent clicks on content from closing */}
+        <div className="detail-modal" onClick={() => setSelectedReviewId(null)}>
+          <div className="modal-content large-modal" onClick={(e) => e.stopPropagation()}>
             <button className="close-button" onClick={() => setSelectedReviewId(null)}>&times;</button>
-            <div className="modal-inner">
+            
+            <div className="modal-grid-layout">
+              {/* LEFT COLUMN: Image and Keywords */}
+              <div className="modal-left-col">
                 <img src={selectedReview.image_url} alt={selectedReview.title} className="detail-artist-image" />
-                <div className="detail-info">
-                    <h2>{selectedReview.title}</h2>
-                    <p className="full-content">{selectedReview.full_content}</p>
-                    
-                    {/* Parse the delimited keyword string */}
-                    <h3>KEYWORDS</h3>
-                    <ul className="keywords-list">
-                      {selectedReview.keywords.split('::').map((keyword, index) => (
-                        <li key={index}>{keyword}</li>
-                      ))}
+                
+                <div className="modal-keywords">
+                  <h3>KEYWORDS</h3>
+                  <ul className="keywords-list">
+                    {/* The ( ... || "") ensures it never tries to split 'undefined' */}
+                    {(selectedReview.keywords || "").split('::').map((keyword, index) => (
+                        /* Only render the <li> if the keyword isn't blank */
+                        keyword ? <li key={index}>{keyword}</li> : null
+                    ))}
                     </ul>
                 </div>
+              </div>
+
+              {/* RIGHT COLUMN: Title and Full Details */}
+              <div className="modal-right-col">
+                <h2 className="modal-title">{selectedReview.title}</h2>
+                {selectedReview.created_at && (
+                  <p className="review-date">
+                     {new Date(selectedReview.created_at).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </p>
+                )}
+                
+                <div className="full-content">
+                    {/* Added the same fallback here */}
+                    {(selectedReview.full_content || "").split('\n').map((paragraph, index) => (
+                        <p key={index}>
+                        {paragraph}
+                        <br />
+                        </p>
+                    ))}
+                    </div>
+              </div>
             </div>
+
           </div>
         </div>
       )}

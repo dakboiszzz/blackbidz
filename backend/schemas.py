@@ -31,11 +31,13 @@ class MusicReviewBase(BaseModel):
     # Keywords are tricky in simple SQLite setups.
     # The best approach for now is to store them as a special-character-delimited string (e.g., using '::').
     # e.g., "Khá hợp khi yêu đương::Hợp khi yêu đời::Vui vẻ phấn chấn"
+    full_content: str
     keywords: str
+    created_at: Optional[datetime] = None
 
 # Model used for creation (input) - needs the full text content
 class MusicReviewCreate(MusicReviewBase):
-    full_content: str
+    pass
 
 # Model used for reading (output) - has the unique ID
 class MusicReview(MusicReviewBase):
