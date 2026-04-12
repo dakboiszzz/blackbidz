@@ -78,7 +78,7 @@ export default function CreateMusicReview() {
           <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Upload Album Cover Image</label>
           <input type="file" accept="image/*" onChange={handleImageUpload} style={{ color: colors.text }} />
           <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
-            Uploading automatically saves to <code>/public/music_reviews/</code> and fills the Image Path below.
+            Uploading automatically saves to Cloudinary and fills the Image Path below.
           </p>
         </div>
 

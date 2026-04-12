@@ -22,7 +22,10 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
 @router.get("/blogs", response_model=List[schemas.PostResponse])
 def get_blogs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """Retrieve a list of all published blog posts."""
-    return db.query(models.Post).filter(models.Post.is_published == True).offset(skip).limit(limit).all()
+    return db.query(models.Post)\
+             .filter(models.Post.is_published == True)\
+             .order_by(models.Post.id.desc())\
+             .offset(skip).limit(limit).all()
 
 @router.get("/blogs/{slug}", response_model=schemas.PostResponse)
 def get_blog(slug: str, db: Session = Depends(get_db)):

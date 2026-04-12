@@ -129,7 +129,7 @@ export default function AdminPanel() {
       style={{ color: colors.text }}
     />
     <p style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
-      Images are saved to <code>/public/blogs/</code> with a unique timestamp.
+      Images are saved to Cloudinary with a unique timestamp, the link is automatically inserted.
     </p>
   </div>
           {/* Only show inputs if NOT in preview, OR show title always so you know which blog it is */}
