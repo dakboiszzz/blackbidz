@@ -21,7 +21,7 @@ export default function AdminPanel() {
     const newPost = { title, slug, summary, content, is_published: true };
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/posts', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPost),
@@ -80,7 +80,7 @@ export default function AdminPanel() {
 
   try {
     setMessage("Uploading image...");
-    const response = await fetch('http://127.0.0.1:8000/api/upload', {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
       method: 'POST',
       body: formData,
     });

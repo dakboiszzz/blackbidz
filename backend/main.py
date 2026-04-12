@@ -43,6 +43,11 @@ app.add_middleware(
 )
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "public", "blogs"))
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "online"}
+
 @app.post("/api/upload")
 async def upload_image(file: UploadFile = File(...)):
     os.makedirs(UPLOAD_DIR, exist_ok=True)
