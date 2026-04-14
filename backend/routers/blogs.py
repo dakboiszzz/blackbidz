@@ -10,7 +10,7 @@ from backend.database import get_db
 
 router = APIRouter(prefix="/api", tags=["Blog Posts"])
 
-@router.post("/posts", response_model=schemas.PostResponse)
+@router.post("/blogs", response_model=schemas.PostResponse)
 def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db_post = db.query(models.Post).filter(models.Post.slug == post.slug).first()
     if db_post:
