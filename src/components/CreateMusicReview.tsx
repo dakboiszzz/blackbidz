@@ -16,7 +16,7 @@ export default function CreateMusicReview() {
   // --- FETCH REVIEWS ---
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/music_reviews`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/music_reviews/`);
       if (response.ok) {
         const data = await response.json();
         setReviews(data);
@@ -88,7 +88,7 @@ export default function CreateMusicReview() {
 
     try {
       setMessage("Uploading image...");
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media/`, {
         method: 'POST',
         body: formData,
       });
