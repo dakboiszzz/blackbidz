@@ -149,7 +149,7 @@ export default function AdminPanel() {
 
   try {
     setMessage("Uploading image...");
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media/`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media`, {
       method: 'POST',
       body: formData,
     });
