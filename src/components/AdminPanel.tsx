@@ -21,7 +21,7 @@ export default function AdminPanel() {
   // --- FETCH POSTS FOR MANAGE VIEW ---
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`);
       if (response.ok) {
         const data = await response.json();
         setPosts(data);
@@ -63,17 +63,18 @@ export default function AdminPanel() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>, publishStatus: boolean) => {
     e.preventDefault();
-    setMessage(editingId ? 'Updating Post...' : 'Publishing...');
+    setMessage(editingId ? 'Updating...' : 'Saving...');
 
-    const payload = { title, slug, summary, content, is_published: true };
+    // We use the publishStatus passed by the specific button you clicked
+    const payload = { title, slug, summary, content, is_published: publishStatus };
     const method = editingId ? 'PUT' : 'POST';
     
-    // IMPORTANT: Make sure this URL matches your FastAPI route exactly
+    // Choose the correct endpoint based on whether we are creating or updating
     const url = editingId 
         ? `${import.meta.env.VITE_API_URL}/api/blogs/${editingId}`
-        : `${import.meta.env.VITE_API_URL}/api/blogs`;
+        : `${import.meta.env.VITE_API_URL}/api/blogs`; // Or /api/blogs, depending on your POST route name
 
     try {
       const response = await fetch(url, {
@@ -83,8 +84,12 @@ export default function AdminPanel() {
       });
 
       if (response.ok) {
-        setMessage(editingId ? 'Post updated successfully! ✍️' : 'Post published successfully! 🎉');
-        resetForm(); // Clear the form after success
+        if (publishStatus) {
+            setMessage(editingId ? 'Post updated and published! 🎉' : 'New post published! 🎉');
+        } else {
+            setMessage('Draft saved successfully! 📝');
+        }
+        resetForm(); 
       } else {
         const errorData = await response.json();
         setMessage(`Error: ${errorData.detail}`);
@@ -93,7 +98,6 @@ export default function AdminPanel() {
       setMessage('Failed to connect to the backend server.');
     }
   };
-
   const handleEditClick = (post: any) => {
     setTitle(post.title);
     setSlug(post.slug);
@@ -202,7 +206,20 @@ export default function AdminPanel() {
                             <li key={post.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', borderBottom: `1px solid ${colors.border}` }}>
                                 <div>
                                     <h3 style={{ margin: '0 0 5px 0' }}>{post.title}</h3>
-                                    <small style={{ color: '#888' }}>{post.slug} | {post.is_published ? 'Published' : 'Draft'}</small>
+                                    <small style={{ color: '#888' }}>
+                                      {post.slug} | 
+                                      <span style={{ 
+                                          marginLeft: '5px',
+                                          padding: '2px 6px', 
+                                          borderRadius: '12px', 
+                                          fontSize: '12px',
+                                          backgroundColor: post.is_published ? '#dff9fb' : '#f5f6fa',
+                                          color: post.is_published ? '#22a6b3' : '#718093',
+                                          fontWeight: 'bold'
+                                      }}>
+                                          {post.is_published ? 'Published' : 'Draft'}
+                                      </span>
+                                  </small>
                                 </div>
                                 <div>
                                     {/* Edit button placeholder for the next step */}
@@ -232,7 +249,7 @@ export default function AdminPanel() {
           <button type="button" onClick={() => setIsPreview(true)} style={tabButtonStyle(isPreview)}>Preview</button>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', border: `1px solid ${colors.border}`, padding: '20px', borderRadius: '0 4px 4px 4px' }}>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '20px', border: `1px solid ${colors.border}`, padding: '20px', borderRadius: '0 4px 4px 4px' }}>
             <div style={{ 
     padding: '15px', 
     border: `1px dashed ${colors.border}`, 
@@ -287,19 +304,31 @@ export default function AdminPanel() {
             </div>
           )}
 
-          <button type="submit" style={{ 
-            padding: '12px 24px', 
-            cursor: 'pointer', 
-            backgroundColor: colors.button, 
-            color: colors.text, 
-            border: 'none', 
-            borderRadius: '4px',
-            fontSize: '16px',
-            fontWeight: 'bold',
-            marginTop: '10px'
-          }}>
-            {editingId ? 'Update Post' : 'Publish Post'}
-          </button>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            {/* DRAFT BUTTON */}
+            <button 
+                type="button" 
+                onClick={(e) => handleSave(e, false)} 
+                style={{ 
+                    padding: '12px 24px', cursor: 'pointer', backgroundColor: 'transparent', 
+                    color: colors.text, border: `2px solid ${colors.border}`, borderRadius: '4px', 
+                    fontSize: '16px', fontWeight: 'bold' 
+                }}>
+                Save as Draft
+            </button>
+
+            {/* PUBLISH BUTTON */}
+            <button 
+                type="button" 
+                onClick={(e) => handleSave(e, true)} 
+                style={{ 
+                    padding: '12px 24px', cursor: 'pointer', backgroundColor: colors.button, 
+                    color: colors.text, border: 'none', borderRadius: '4px', 
+                    fontSize: '16px', fontWeight: 'bold' 
+                }}>
+                {editingId ? 'Update & Publish' : 'Publish Post'}
+            </button>
+        </div>
         </form>
           </>
         )}

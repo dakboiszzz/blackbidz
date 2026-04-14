@@ -22,6 +22,13 @@ def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
     db.refresh(new_post)
     return new_post
 
+@router.get("/posts", response_model=List[schemas.PostResponse])
+def get_all_posts_for_admin(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    """Retrieve ALL posts (published and drafts) for the admin panel."""
+    return db.query(models.Post)\
+             .order_by(models.Post.id.desc())\
+             .offset(skip).limit(limit).all()
+
 @router.get("/blogs", response_model=List[schemas.PostResponse])
 def get_blogs(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     """Retrieve a list of all published blog posts."""
