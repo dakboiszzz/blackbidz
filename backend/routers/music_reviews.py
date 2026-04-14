@@ -7,6 +7,8 @@ from typing import List
 from backend import models, schemas
 from backend.database import get_db
 
+from backend.dependencies import get_current_admin
+
 router = APIRouter(prefix="/api/music_reviews", tags=["Music Evaluations"])
 
 @router.get("/", response_model=List[schemas.MusicReview])
@@ -14,7 +16,11 @@ def get_music_reviews(db: Session = Depends(get_db)):
     return db.query(models.MusicReview).order_by(models.MusicReview.id.desc()).all()
 
 @router.post("/", response_model=schemas.MusicReview)
-def create_music_review(review: schemas.MusicReviewCreate, db: Session = Depends(get_db)):
+def create_music_review(
+    review: schemas.MusicReviewCreate, 
+    db: Session = Depends(get_db), 
+    admin: str = Depends(get_current_admin)
+):
     new_review = models.MusicReview(**review.model_dump())
     db.add(new_review)
     db.commit()
@@ -22,7 +28,12 @@ def create_music_review(review: schemas.MusicReviewCreate, db: Session = Depends
     return new_review
 
 @router.put("/{review_id}", response_model=schemas.MusicReview)
-def update_music_review(review_id: int, review_update: schemas.MusicReviewUpdate, db: Session = Depends(get_db)):
+def update_music_review(
+    review_id: int, 
+    review_update: schemas.MusicReviewUpdate, 
+    db: Session = Depends(get_db), 
+    admin: str = Depends(get_current_admin)
+):
     db_review = db.query(models.MusicReview).filter(models.MusicReview.id == review_id).first()
     if not db_review:
         raise HTTPException(status_code=404, detail="Review not found")
@@ -37,7 +48,11 @@ def update_music_review(review_id: int, review_update: schemas.MusicReviewUpdate
     return db_review
 
 @router.delete("/{review_id}")
-async def delete_music_review(review_id: int, db: Session = Depends(get_db)):
+async def delete_music_review(
+    review_id: int, 
+    db: Session = Depends(get_db), 
+    admin: str = Depends(get_current_admin)
+):
     db_review = db.query(models.MusicReview).filter(models.MusicReview.id == review_id).first()
     if not db_review:
         raise HTTPException(status_code=404, detail="Review not found")

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import { apiFetch } from '../utils/apiFetch';
 export default function CreateMusicReview() {
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
@@ -16,7 +16,7 @@ export default function CreateMusicReview() {
   // --- FETCH REVIEWS ---
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/music_reviews/`);
+      const response = await apiFetch('/api/music_reviews/');
       if (response.ok) {
         const data = await response.json();
         setReviews(data);
@@ -39,7 +39,7 @@ export default function CreateMusicReview() {
     }
     try {
       setMessage('Deleting review and image...');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/music_reviews/${id}`, {
+      const response = await apiFetch(`/api/music_reviews/${id}`, {
         method: 'DELETE',
       });
 
@@ -88,7 +88,7 @@ export default function CreateMusicReview() {
 
     try {
       setMessage("Uploading image...");
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media`, {
+      const response = await apiFetch('/api/media', {
         method: 'POST',
         body: formData,
       });
@@ -117,14 +117,13 @@ export default function CreateMusicReview() {
 
     // Decide if we are POSTing (new) or PUTting (updating existing)
     const method = editingId ? 'PUT' : 'POST';
-    const url = editingId 
-        ? `${import.meta.env.VITE_API_URL}/api/music_reviews/${editingId}`
-        : `${import.meta.env.VITE_API_URL}/api/music_reviews`;
+    const endpoint = editingId 
+        ? `/api/music_reviews/${editingId}`
+        : `/api/music_reviews`;
 
     try {
-      const response = await fetch(url, {
+      const response = await apiFetch(endpoint, {
         method: method,
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 

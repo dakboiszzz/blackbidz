@@ -1,15 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/NavBar';
-import Hero from './components/Hero';
+import Hero from './pages/Hero';
 import Footer from './components/Footer';
-import Blogs from './components/Blogs';
-import BlogPost from './components/BlogPost';
-import AdminPanel from './components/AdminPanel';
+import Blogs from './pages/Blogs';
+import BlogPost from './pages/BlogPost';
+import AdminPanel from './pages/AdminPanel';
 import './App.css'
 import Loader from './components/Loader';
 import { useState, useEffect } from 'react';
-import MusicEvaluations from './components/MusicEvaluations';
-import CreateMusicReview from './components/CreateMusicReview';
+import MusicEvaluations from './pages/MusicEvaluations';
+import CreateMusicReview from './pages/CreateMusicReview';
+import { AuthProvider } from './context/AuthContext';
+import AdminDashboard from './pages/AdminDashboard';
+// 1. IMPORT YOUR NEW FILES HERE
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -20,7 +25,6 @@ function App() {
   useEffect(() => {
     const checkServer = async () => {
       try {
-        // Ping your health endpoint
         const res = await fetch(`${API_URL}/api/health`);
         if (res.ok) {
           setIsServerReady(true);
@@ -29,7 +33,6 @@ function App() {
         }
       } catch (err) {
         setMessage("Server is sleeping. Waking it up...");
-        // Re-check every 4 seconds until it responds
         setTimeout(checkServer, 4000);
       }
     };
@@ -40,24 +43,39 @@ function App() {
   if (!isServerReady) {
     return <Loader message={message} />;
   }
-  return (
-    <Router>
-      <div className="portfolio-container">
-        <Navbar />
-        
-        <Routes>
-          <Route path="/" element={<Hero />} />
-          <Route path="/blogs" element={<Blogs />} />
-          
-          <Route path="/blogs/:slug" element={<BlogPost />} />
-          <Route path="/secret-admin-panel" element={<AdminPanel />} />
-          <Route path="/projects" element={<MusicEvaluations />} />
-          <Route path="/secret-music-admin" element={<CreateMusicReview />} />
-        </Routes>
 
-        <Footer />
-      </div>
-    </Router>
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="portfolio-container">
+          <Navbar />
+          
+          <Routes>
+            {/* --- PUBLIC ROUTES --- */}
+            <Route path="/" element={<Hero />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blogs/:slug" element={<BlogPost />} />
+            <Route path="/projects" element={<MusicEvaluations />} />
+            
+            {/* 2. ADD THE LOGIN ROUTE HERE */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* --- PROTECTED ADMIN ROUTES --- */}
+            {/* 3. WRAP YOUR SECRET ROUTES IN THE PROTECTED ROUTE COMPONENT */}
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+
+          <Footer />
+        </div>
+      </Router> 
+    </AuthProvider>
   );
 }
 

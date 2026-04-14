@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import MarkdownRenderer from './MarkdownRenderer';
+import MarkdownRenderer from '../components/MarkdownRenderer';
 
 interface Post {
   id: number;

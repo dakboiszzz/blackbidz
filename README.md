@@ -4,72 +4,70 @@ I'm working on a web development project. Here's what I used in this project (Yo
 
 # Project structure: blackbidz
 
-**Generated:** 4/13/2026, 6:10:56 AM
-**Root Path:** `/home/blackbi/blackbidz`
 
 ```
-├── .github
-│   └── workflows
-│       └── sync_to_hf.yml
-├── backend
-│   ├── routers
-│   │   ├── blogs.py
-│   │   ├── music_reviews.py
-│   │   └── uploads.py
-│   ├── Dockerfile
-│   ├── README.md
-│   ├── database.py
-│   ├── init_db.py
-│   ├── main.py
-│   ├── migrate_data.py
-│   ├── models.py
-│   ├── pyproject.toml
-│   ├── requirements.txt
-│   ├── schemas.py
-│   └── uv.lock
-├── public
-│   ├── blogs
-│   │   └── 1775985563_1_lth_first_blog.jpg
-│   ├── fonts
-│   │   └── TAN-Mon-Cheri.otf
-│   ├── music_reviews
-│   │   ├── 1776001366_cai_thu_hai.jpg
-│   │   └── 1776002956_darangto.jpg
-│   ├── LTH_CV.pdf
-│   └── vite.svg
-├── src
-│   ├── assets
-│   │   ├── logo.png
-│   │   ├── lth.png
-│   │   └── react.svg
-│   ├── components
-│   │   ├── AdminPanel.tsx
-│   │   ├── BlogPost.tsx
-│   │   ├── Blogs.tsx
-│   │   ├── CreateMusicReview.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Hero.tsx
-│   │   ├── Loader.tsx
-│   │   ├── MarkdownRenderer.tsx
-│   │   ├── MusicEvaluations.css
-│   │   ├── MusicEvaluations.tsx
-│   │   ├── MusicReviewCard.tsx
-│   │   └── NavBar.tsx
-│   ├── App.css
-│   ├── App.tsx
-│   ├── index.css
-│   └── main.tsx
-├── .gitignore
-├── README.md
-├── eslint.config.js
-├── index.html
-├── package-lock.json
-├── package.json
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-├── vercel.json
-└── vite.config.ts
+├── 📁 .github
+│   └── 📁 workflows
+│       └── ⚙️ sync_to_hf.yml
+├── 📁 backend
+│   ├── 📁 routers
+│   │   ├── 🐍 blogs.py
+│   │   ├── 🐍 media.py
+│   │   └── 🐍 music_reviews.py
+│   ├── 🐳 Dockerfile
+│   ├── 📝 README.md
+│   ├── 🐍 database.py
+│   ├── 🐍 init_db.py
+│   ├── 🐍 main.py
+│   ├── 🐍 migrate_data.py
+│   ├── 🐍 models.py
+│   ├── ⚙️ pyproject.toml
+│   ├── 📄 requirements.txt
+│   ├── 🐍 schemas.py
+│   └── 📄 uv.lock
+├── 📁 public
+│   ├── 📁 blogs
+│   │   └── 🖼️ 1775985563_1_lth_first_blog.jpg
+│   ├── 📁 fonts
+│   │   └── 📄 TAN-Mon-Cheri.otf
+│   ├── 📁 music_reviews
+│   │   ├── 🖼️ 1776001366_cai_thu_hai.jpg
+│   │   └── 🖼️ 1776002956_darangto.jpg
+│   ├── 📕 LTH_CV.pdf
+│   └── 🖼️ vite.svg
+├── 📁 src
+│   ├── 📁 assets
+│   │   ├── 🖼️ logo.png
+│   │   ├── 🖼️ lth.png
+│   │   └── 🖼️ react.svg
+│   ├── 📁 components
+│   │   ├── 📄 AdminPanel.tsx
+│   │   ├── 📄 BlogPost.tsx
+│   │   ├── 📄 Blogs.tsx
+│   │   ├── 📄 CreateMusicReview.tsx
+│   │   ├── 📄 Footer.tsx
+│   │   ├── 📄 Hero.tsx
+│   │   ├── 📄 Loader.tsx
+│   │   ├── 📄 MarkdownRenderer.tsx
+│   │   ├── 🎨 MusicEvaluations.css
+│   │   ├── 📄 MusicEvaluations.tsx
+│   │   ├── 📄 MusicReviewCard.tsx
+│   │   └── 📄 NavBar.tsx
+│   ├── 🎨 App.css
+│   ├── 📄 App.tsx
+│   ├── 🎨 index.css
+│   └── 📄 main.tsx
+├── ⚙️ .gitignore
+├── 📝 README.md
+├── 📄 eslint.config.js
+├── 🌐 index.html
+├── ⚙️ package-lock.json
+├── ⚙️ package.json
+├── ⚙️ tsconfig.app.json
+├── ⚙️ tsconfig.json
+├── ⚙️ tsconfig.node.json
+├── ⚙️ vercel.json
+└── 📄 vite.config.ts
 ```
 
 ---

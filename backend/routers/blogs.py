@@ -1,26 +1,16 @@
 import re
 import cloudinary.uploader
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
-
+from backend.dependencies import get_current_admin
 from backend import models, schemas
 from backend.database import get_db
 
 router = APIRouter(prefix="/api", tags=["Blog Posts"])
 
-@router.post("/blogs", response_model=schemas.PostResponse)
-def create_post(post: schemas.PostCreate, db: Session = Depends(get_db)):
-    db_post = db.query(models.Post).filter(models.Post.slug == post.slug).first()
-    if db_post:
-        raise HTTPException(status_code=400, detail="Slug already registered")
-    
-    new_post = models.Post(**post.model_dump())
-    db.add(new_post)
-    db.commit()
-    db.refresh(new_post)
-    return new_post
+# --PUBLIC ENDPOINTS--
 
 @router.get("/posts", response_model=List[schemas.PostResponse])
 def get_all_posts_for_admin(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -45,8 +35,30 @@ def get_blog(slug: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Blog post not found")
     return post
 
+# --ADMIN ENDPOINTS--
+@router.post("/blogs", response_model=schemas.PostResponse)
+def create_post(
+    post: schemas.PostCreate, 
+    db: Session = Depends(get_db), 
+    admin: str = Depends(get_current_admin)
+):
+    db_post = db.query(models.Post).filter(models.Post.slug == post.slug).first()
+    if db_post:
+        raise HTTPException(status_code=400, detail="Slug already registered")
+    
+    new_post = models.Post(**post.model_dump())
+    db.add(new_post)
+    db.commit()
+    db.refresh(new_post)
+    return new_post
+
 @router.put("/blogs/{post_id}", response_model=schemas.PostResponse)
-def update_post(post_id: int, post_update: schemas.PostUpdate, db: Session = Depends(get_db)):
+def update_post(
+    post_id: int, 
+    post_update: schemas.PostUpdate, 
+    db: Session = Depends(get_db), 
+    admin: str = Depends(get_current_admin)
+):
     db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not db_post:
         raise HTTPException(status_code=404, detail="Post not found")
@@ -61,7 +73,11 @@ def update_post(post_id: int, post_update: schemas.PostUpdate, db: Session = Dep
     return db_post
 
 @router.delete("/blogs/{post_id}")
-async def delete_post(post_id: int, db: Session = Depends(get_db)):
+async def delete_post(
+    post_id: int, 
+    db: Session = Depends(get_db), 
+    admin: str = Depends(get_current_admin)
+):
     # 1. Fetch the post from the database
     post = db.query(models.Post).filter(models.Post.id == post_id).first()
     if not post:

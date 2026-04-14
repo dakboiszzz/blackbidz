@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import MarkdownRenderer from './MarkdownRenderer';
-
+import MarkdownRenderer from '../components/MarkdownRenderer';
+import { apiFetch } from '../utils/apiFetch';
 export default function AdminPanel() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
@@ -21,7 +21,7 @@ export default function AdminPanel() {
   // --- FETCH POSTS FOR MANAGE VIEW ---
   const fetchPosts = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`);
+      const response = await apiFetch('/api/blogs');
       if (response.ok) {
         const data = await response.json();
         setPosts(data);
@@ -46,7 +46,7 @@ export default function AdminPanel() {
 
     try {
       setMessage('Deleting post and images...');
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs/${postId}`, {
+      const response = await apiFetch(`/api/blogs/${postId}`, {
         method: 'DELETE',
       });
 
@@ -72,14 +72,11 @@ export default function AdminPanel() {
     const method = editingId ? 'PUT' : 'POST';
     
     // Choose the correct endpoint based on whether we are creating or updating
-    const url = editingId 
-        ? `${import.meta.env.VITE_API_URL}/api/blogs/${editingId}`
-        : `${import.meta.env.VITE_API_URL}/api/blogs`; // Or /api/blogs, depending on your POST route name
+    const endpoint = editingId ? `/api/blogs/${editingId}` : `/api/blogs`;
 
     try {
-      const response = await fetch(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
+      const response = await apiFetch(endpoint, {
+        method,
         body: JSON.stringify(payload),
       });
 
@@ -153,7 +150,7 @@ export default function AdminPanel() {
 
   try {
     setMessage("Uploading image...");
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media`, {
+    const response = await apiFetch('/api/media', {
       method: 'POST',
       body: formData,
     });

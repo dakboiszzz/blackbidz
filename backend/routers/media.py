@@ -2,9 +2,11 @@ import os
 import re
 import cloudinary
 import cloudinary.uploader
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends
 from pydantic import BaseModel
 from dotenv import load_dotenv
+
+from backend.dependencies import get_current_admin
 
 # Load environment variables so Cloudinary can find CLOUDINARY_URL
 load_dotenv()
@@ -19,7 +21,11 @@ class DeleteMediaRequest(BaseModel):
     url: str
 
 @router.post("")
-async def upload_image(file: UploadFile = File(...), folder: str = Form("blogs")):
+async def upload_image(
+    file: UploadFile = File(...), 
+    folder: str = Form(...), 
+    admin: str = Depends(get_current_admin)
+):
     # 1. Security constraint: only allow your specified frontend folders
     valid_folders = ["blogs", "music_reviews", "projects"]
     if folder not in valid_folders:
@@ -43,7 +49,10 @@ async def upload_image(file: UploadFile = File(...), folder: str = Form("blogs")
 
 
 @router.delete("")
-async def delete_image(request: DeleteMediaRequest):
+async def delete_image(
+    request: DeleteMediaRequest,
+    admin: str = Depends(get_current_admin)
+):
     try:
         # 1. Extract the public_id using RegEx
         # Matches everything after '/upload/' (ignoring the optional version like v123456/) 

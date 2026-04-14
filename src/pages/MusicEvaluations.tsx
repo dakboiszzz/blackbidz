@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import MusicReviewCard from './MusicReviewCard';
+import MusicReviewCard from '../components/MusicReviewCard';
 import './MusicEvaluations.css'; // We will create this next
 
 // Define the interface for the full review with content
