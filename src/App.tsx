@@ -4,12 +4,10 @@ import Hero from './pages/Hero';
 import Footer from './components/Footer';
 import Blogs from './pages/Blogs';
 import BlogPost from './pages/BlogPost';
-import AdminPanel from './pages/AdminPanel';
 import './App.css'
 import Loader from './components/Loader';
 import { useState, useEffect } from 'react';
 import MusicEvaluations from './pages/MusicEvaluations';
-import CreateMusicReview from './pages/CreateMusicReview';
 import { AuthProvider } from './context/AuthContext';
 import AdminDashboard from './pages/AdminDashboard';
 // 1. IMPORT YOUR NEW FILES HERE
