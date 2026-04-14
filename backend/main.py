@@ -6,7 +6,7 @@ from backend.database import engine
 import backend.models as models
 
 # Import your newly created routers
-from backend.routers import blogs, music_reviews, uploads
+from backend.routers import blogs, media, music_reviews
 
 # This safely creates any missing tables if they don't exist yet
 models.Base.metadata.create_all(bind=engine)
@@ -35,7 +35,7 @@ app.add_middleware(
 )
 
 # --- Include Routers ---
-app.include_router(uploads.router)
+app.include_router(media.router)
 app.include_router(blogs.router)
 app.include_router(music_reviews.router)
 

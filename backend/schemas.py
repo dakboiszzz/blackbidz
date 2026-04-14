@@ -9,7 +9,13 @@ class PostBase(BaseModel):
     summary: Optional[str] = None
     content: Optional[str] = None
     is_published: bool = False
-
+    
+class PostUpdate(BaseModel):
+    title: Optional[str] = None
+    slug: Optional[str] = None
+    summary: Optional[str] = None
+    content: Optional[str] = None
+    is_published: Optional[bool] = None
 # Properties required when creating a Post 
 # (Included for completeness and future admin panel)
 class PostCreate(PostBase):
@@ -44,3 +50,11 @@ class MusicReview(MusicReviewBase):
     id: int
     # Tell Pydantic how to read the SQLAlchemy model
     model_config = ConfigDict(from_attributes=True)
+
+
+class MusicReviewUpdate(BaseModel):
+    title: Optional[str] = None
+    image_url: Optional[str] = None
+    summary: Optional[str] = None
+    full_content: Optional[str] = None
+    keywords: Optional[str] = None

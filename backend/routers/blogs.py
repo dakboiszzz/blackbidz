@@ -1,3 +1,6 @@
+import re
+import cloudinary.uploader
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
@@ -34,3 +37,46 @@ def get_blog(slug: str, db: Session = Depends(get_db)):
     if not post:
         raise HTTPException(status_code=404, detail="Blog post not found")
     return post
+
+@router.put("/blogs/{post_id}", response_model=schemas.PostResponse)
+def update_post(post_id: int, post_update: schemas.PostUpdate, db: Session = Depends(get_db)):
+    db_post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if not db_post:
+        raise HTTPException(status_code=404, detail="Post not found")
+    
+    # exclude_unset=True ensures we only update fields the frontend actually sent
+    update_data = post_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(db_post, key, value)
+        
+    db.commit()
+    db.refresh(db_post)
+    return db_post
+
+@router.delete("/blogs/{post_id}")
+async def delete_post(post_id: int, db: Session = Depends(get_db)):
+    # 1. Fetch the post from the database
+    post = db.query(models.Post).filter(models.Post.id == post_id).first()
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    # 2. The Regex Scanner: Find all Cloudinary URLs in the markdown content
+    # This looks for the pattern: ![...](https://res.cloudinary.com/...)
+    image_urls = re.findall(r'!\[.*?\]\((https://res\.cloudinary\.com/.*?)\)', post.content or "")
+    
+    # 3. Clean up the Cloudinary storage
+    for url in image_urls:
+        try:
+            # Extract the public_id using the same logic we put in media.py
+            match = re.search(r'/upload/(?:v\d+/)?(.+?)\.[a-zA-Z0-9]+$', url)
+            if match:
+                public_id = match.group(1)
+                cloudinary.uploader.destroy(public_id)
+        except Exception as e:
+            print(f"Warning: Failed to delete image {url} from cloud: {e}")
+
+    # 4. Wipe the database row
+    db.delete(post)
+    db.commit()
+
+    return {"message": "Post and all embedded images deleted successfully"}

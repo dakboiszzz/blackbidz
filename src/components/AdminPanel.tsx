@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MarkdownRenderer from './MarkdownRenderer';
 
 export default function AdminPanel() {
@@ -8,28 +8,52 @@ export default function AdminPanel() {
   const [content, setContent] = useState('');
   const [message, setMessage] = useState('');
   const [isPreview, setIsPreview] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  // --- NEW STATE FOR DASHBOARD ---
+  // 'create' shows your form, 'manage' shows the list of posts
+  const [viewMode, setViewMode] = useState<'create' | 'manage'>('create'); 
+  const [posts, setPosts] = useState<any[]>([]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     setSlug(e.target.value.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, ''));
   };
+  // --- FETCH POSTS FOR MANAGE VIEW ---
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs`);
+      if (response.ok) {
+        const data = await response.json();
+        setPosts(data);
+      }
+    } catch (error) {
+      setMessage("Failed to load posts.");
+    }
+  };
+  // Run fetchPosts whenever we switch to the 'manage' tab
+  useEffect(() => {
+    if (viewMode === 'manage') {
+      fetchPosts();
+    }
+  }, [viewMode]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setMessage('Publishing...');
-
-    const newPost = { title, slug, summary, content, is_published: true };
+  // --- DELETE LOGIC ---
+  const handleDelete = async (postId: number, postTitle: string) => {
+    // Safety check so you don't accidentally click it
+    if (!window.confirm(`Are you sure you want to delete "${postTitle}"? This will also delete its images from the cloud.`)) {
+      return;
+    }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newPost),
+      setMessage('Deleting post and images...');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/blogs/${postId}`, {
+        method: 'DELETE',
       });
 
       if (response.ok) {
-        setMessage('Post published successfully! 🎉');
-        setTitle(''); setSlug(''); setSummary(''); setContent('');
+        setMessage('Post deleted successfully! 🗑️');
+        // Refresh the list so the deleted post disappears
+        fetchPosts(); 
       } else {
         const errorData = await response.json();
         setMessage(`Error: ${errorData.detail}`);
@@ -39,6 +63,51 @@ export default function AdminPanel() {
     }
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage(editingId ? 'Updating Post...' : 'Publishing...');
+
+    const payload = { title, slug, summary, content, is_published: true };
+    const method = editingId ? 'PUT' : 'POST';
+    
+    // IMPORTANT: Make sure this URL matches your FastAPI route exactly
+    const url = editingId 
+        ? `${import.meta.env.VITE_API_URL}/api/blogs/${editingId}`
+        : `${import.meta.env.VITE_API_URL}/api/blogs`;
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        setMessage(editingId ? 'Post updated successfully! ✍️' : 'Post published successfully! 🎉');
+        resetForm(); // Clear the form after success
+      } else {
+        const errorData = await response.json();
+        setMessage(`Error: ${errorData.detail}`);
+      }
+    } catch (error) {
+      setMessage('Failed to connect to the backend server.');
+    }
+  };
+
+  const handleEditClick = (post: any) => {
+    setTitle(post.title);
+    setSlug(post.slug);
+    setSummary(post.summary);
+    setContent(post.content);
+    setEditingId(post.id);
+    setViewMode('create'); // Instantly flips the view back to the editor tab
+    setMessage(`Editing mode active for: ${post.title}`);
+  };
+  const resetForm = () => {
+    setTitle(''); setSlug(''); setSummary(''); setContent('');
+    setEditingId(null);
+    setMessage('');
+  };
   
   // Theme colors derived from your homepage
   const colors = {
@@ -80,7 +149,7 @@ export default function AdminPanel() {
 
   try {
     setMessage("Uploading image...");
-    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/upload`, {
+    const response = await fetch(`${import.meta.env.VITE_API_URL}/api/media`, {
       method: 'POST',
       body: formData,
     });
@@ -103,8 +172,60 @@ export default function AdminPanel() {
   return (
     <div style={{ backgroundColor: colors.background, minHeight: '100vh', padding: '40px 20px', color: colors.text }}>
       <div style={{ maxWidth: '800px', margin: '0 auto', backgroundColor: '#FFFFFF', padding: '30px', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-        <h2 style={{ fontWeight: 'normal', marginBottom: '20px', fontSize: '28px' }}>Create a New Blog Post</h2>
         
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={{ fontWeight: 'normal', fontSize: '28px', margin: 0 }}>Blog Admin Panel</h2>
+            {/* MAIN NAVIGATION: Switch between Create and Manage */}
+            <div>
+                <button 
+                    onClick={() => { resetForm(); setViewMode('create'); }} 
+                    style={{ ...tabButtonStyle(viewMode === 'create'), borderRadius: '4px', borderBottom: `1px solid ${colors.border}` }}>
+                    {editingId ? "Editing Mode" : "Create New"}
+                </button>
+                <button 
+                    onClick={() => setViewMode('manage')} 
+                    style={{ ...tabButtonStyle(viewMode === 'manage'), borderRadius: '4px', borderBottom: `1px solid ${colors.border}` }}>
+                    Manage Posts
+                </button>
+            </div>
+        </div>
+
+
+        {/* ========================================= */}
+        {/* VIEW 1: MANAGE POSTS (NEW)                */}
+        {/* ========================================= */}
+        {viewMode === 'manage' && (
+            <div>
+                {posts.length === 0 ? <p>No posts found.</p> : (
+                    <ul style={{ listStyle: 'none', padding: 0 }}>
+                        {posts.map(post => (
+                            <li key={post.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', borderBottom: `1px solid ${colors.border}` }}>
+                                <div>
+                                    <h3 style={{ margin: '0 0 5px 0' }}>{post.title}</h3>
+                                    <small style={{ color: '#888' }}>{post.slug} | {post.is_published ? 'Published' : 'Draft'}</small>
+                                </div>
+                                <div>
+                                    {/* Edit button placeholder for the next step */}
+                                    <button 
+                                        onClick={() => handleEditClick(post)}
+                                        style={{ padding: '8px 12px', marginRight: '10px', cursor: 'pointer', backgroundColor: colors.button, border: 'none', borderRadius: '4px' }}>
+                                        Edit
+                                    </button>
+                                    <button 
+                                        onClick={() => handleDelete(post.id, post.title)}
+                                        style={{ padding: '8px 12px', cursor: 'pointer', backgroundColor: '#ffeaa7', color: '#d63031', border: '1px solid #d63031', borderRadius: '4px', fontWeight: 'bold' }}>
+                                        Delete
+                                    </button>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        )}
+
+        {viewMode === 'create' && (
+          <>
         {/* TAB BUTTONS */}
         <div style={{ display: 'flex', marginBottom: '-1px' }}>
           <button type="button" onClick={() => setIsPreview(false)} style={tabButtonStyle(!isPreview)}>Write</button>
@@ -177,10 +298,11 @@ export default function AdminPanel() {
             fontWeight: 'bold',
             marginTop: '10px'
           }}>
-            Publish Post
+            {editingId ? 'Update Post' : 'Publish Post'}
           </button>
         </form>
-
+          </>
+        )}
         {message && <p style={{ marginTop: '20px', fontWeight: 'bold', color: colors.text }}>{message}</p>}
       </div>
     </div>
