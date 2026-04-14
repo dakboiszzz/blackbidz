@@ -13,4 +13,4 @@ COPY . /app/backend/
 
 # Move main.py back to the root ONLY if you want uvicorn to find it easily,
 # OR just point uvicorn to the new location:
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860", "--proxy-headers", "--forwarded-allow-ips=*"]
+CMD ["uvicorn", "backend.main:app", "--host", "0.0.0.0", "--port", "7860", "--proxy-headers", "--forwarded-allow-ips=*"]
