@@ -13,12 +13,12 @@ load_dotenv()
 cloudinary.config(secure=True) 
 
 # Renamed prefix from /upload to /media
-router = APIRouter(prefix="/api/media", tags=["Media"])
+router = APIRouter(prefix="/api/media/", tags=["Media"])
 
 class DeleteMediaRequest(BaseModel):
     url: str
 
-@router.post("")
+@router.post("/")
 async def upload_image(file: UploadFile = File(...), folder: str = Form("blogs")):
     # 1. Security constraint: only allow your specified frontend folders
     valid_folders = ["blogs", "music_reviews", "projects"]
@@ -42,7 +42,7 @@ async def upload_image(file: UploadFile = File(...), folder: str = Form("blogs")
         raise HTTPException(status_code=500, detail="Failed to upload image to the cloud.")
 
 
-@router.delete("")
+@router.delete("/")
 async def delete_image(request: DeleteMediaRequest):
     try:
         # 1. Extract the public_id using RegEx
