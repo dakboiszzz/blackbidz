@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import MarkdownRenderer from '../components/MarkdownRenderer';
 import { apiFetch } from '../utils/apiFetch';
-import { Link } from 'react-router-dom';
+
 export default function SecretDiaries() {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
