@@ -21,7 +21,7 @@ export default function AdminPanel() {
   // --- FETCH POSTS FOR MANAGE VIEW ---
   const fetchPosts = async () => {
     try {
-      const response = await apiFetch('/api/blogs');
+      const response = await apiFetch('/api/posts');
       if (response.ok) {
         const data = await response.json();
         setPosts(data);
