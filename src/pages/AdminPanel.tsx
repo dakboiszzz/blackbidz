@@ -147,6 +147,7 @@ export default function AdminPanel() {
 
   const formData = new FormData();
   formData.append('file', file);
+  formData.append('folder', 'blogs');
 
   try {
     setMessage("Uploading image...");

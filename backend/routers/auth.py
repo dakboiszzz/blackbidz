@@ -7,10 +7,6 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 
 @router.post("/login")
 async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    print(f"--- DEBUGGING LOGIN ---")
-    print(f"FastAPI received this password: {form_data.password}")
-    print(f"Password length: {len(form_data.password)} characters")
-    print(f"FastAPI received this username: {form_data.username}")
     admin_user = os.getenv("ADMIN_USERNAME")
     admin_hash = os.getenv("ADMIN_PASSWORD_HASH")
 
