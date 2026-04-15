@@ -13,6 +13,8 @@ import AdminDashboard from './pages/AdminDashboard';
 // 1. IMPORT YOUR NEW FILES HERE
 import Login from './pages/Login';
 import ProtectedRoute from './components/ProtectedRoute';
+import SecretDiaryList from './pages/SecretDiaryList';
+import SecretDiaryPost from './pages/SecretDiaryPost';
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -65,6 +67,20 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/diaries" 
+              element={<ProtectedRoute><SecretDiaryList /></ProtectedRoute>} 
+            />
+
+            {/* NEW: The Vault Reading Room */}
+            <Route 
+              path="/admin/diaries/:slug" 
+              element={
+                <ProtectedRoute>
+                  <SecretDiaryPost />
                 </ProtectedRoute>
               } 
             />

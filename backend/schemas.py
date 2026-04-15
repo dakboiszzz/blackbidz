@@ -58,3 +58,22 @@ class MusicReviewUpdate(BaseModel):
     summary: Optional[str] = None
     full_content: Optional[str] = None
     keywords: Optional[str] = None
+
+
+
+class DiaryBase(BaseModel):
+    title: str
+    slug: str
+    summary: Optional[str] = None
+    content: str
+    is_published: bool = False
+
+class DiaryCreate(DiaryBase):
+    pass
+
+class DiaryResponse(DiaryBase):
+    id: int
+    created_at: datetime
+
+    class Config:
+        from_attributes = True

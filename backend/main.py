@@ -6,7 +6,7 @@ from backend.database import engine
 import backend.models as models
 
 # Import your newly created routers
-from backend.routers import blogs, media, music_reviews,auth
+from backend.routers import blogs, media, music_reviews,auth, diaries
 
 # This safely creates any missing tables if they don't exist yet
 models.Base.metadata.create_all(bind=engine)
@@ -39,6 +39,7 @@ app.include_router(auth.router)
 app.include_router(media.router)
 app.include_router(blogs.router)
 app.include_router(music_reviews.router)
+app.include_router(diaries.router)
 
 # --- Root & Health Endpoints ---
 @app.get("/api/health")

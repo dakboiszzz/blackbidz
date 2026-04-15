@@ -27,7 +27,7 @@ async def upload_image(
     admin: str = Depends(get_current_admin)
 ):
     # 1. Security constraint: only allow your specified frontend folders
-    valid_folders = ["blogs", "music_reviews", "projects"]
+    valid_folders = ["blogs", "music_reviews", "projects", "diaries"]
     if folder not in valid_folders:
         raise HTTPException(status_code=400, detail="Invalid target folder")
 

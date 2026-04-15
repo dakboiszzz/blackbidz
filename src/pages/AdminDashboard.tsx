@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
+import { Link } from 'react-router-dom';
 // Import your existing admin components
 import AdminPanel from './AdminPanel';
 import CreateMusicReview from './CreateMusicReview';
-
+import SecretDiaries from './SecretDiaries';
 export default function AdminDashboard() {
   // State to track which admin panel is currently active
-  const [activeTab, setActiveTab] = useState<'blogs' | 'music'>('blogs');
+  const [activeTab, setActiveTab] = useState<'blogs' | 'music' | 'diaries'>('blogs');
   
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -72,6 +72,35 @@ export default function AdminDashboard() {
           >
             Music Reviews
           </button>
+          <button 
+            onClick={() => setActiveTab('diaries')}
+            style={{ 
+                padding: '10px 20px', 
+                cursor: 'pointer', 
+                backgroundColor: activeTab === 'diaries' ? colors.text : 'transparent', 
+                color: activeTab === 'diaries' ? '#FFF' : colors.text,
+                border: `1px solid ${colors.text}`, 
+                borderRadius: '4px',
+                fontWeight: 'bold'
+            }}
+            >
+            Personal Diaries
+            </button>
+
+            <Link 
+            to="/admin/diaries"
+            style={{ 
+              padding: '10px 20px', 
+              textDecoration: 'none',
+              backgroundColor: '#5D4A3A', 
+              color: '#FFF',
+              borderRadius: '4px',
+              marginLeft: '20px',
+              fontWeight: 'bold'
+            }}
+          >
+            Read Vault
+          </Link>
 
           <button 
             onClick={handleLogout}
@@ -96,6 +125,7 @@ export default function AdminDashboard() {
       <main style={{ flex: 1, padding: '20px' }}>
         {activeTab === 'blogs' && <AdminPanel />}
         {activeTab === 'music' && <CreateMusicReview />}
+        {activeTab === 'diaries' && <SecretDiaries />}
       </main>
 
     </div>
